@@ -1,4 +1,4 @@
-## Ghost 7.0。4 正式发布
+## Ghost 7.0.4 正式发布
 
 ![](http://static.ghostchina.com/image/a/21/de1b2911072f5a4eff82abdb62632.png)
 
