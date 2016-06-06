@@ -77,14 +77,19 @@ RUN \
   rm -f Ghost-0.7.4-zh-full.zip && \
   cd /ghost && \
   npm install --production && \
-  sed 's/127.0.0.1/0.0.0.0/' /ghost/config.example.js > /ghost/config.js && \
   useradd ghost --home /ghost
 
 # Add files.
 ADD start.bash /ghost-start
 
+ADD js/config.js /ghost/config.js
+ADD js/post.js /ghost/core/server/models/post.js
+ADD js/ghost.min.js /ghost/core/built/assets/ghost.min.js
+ADD js/vendor.min.js /ghost/core/built/assets/vendor.min.js
+
 # Set environment variables.
 ENV NODE_ENV production
+ENV TERM xterm
 
 # Define mountable directories.
 VOLUME /ghost
