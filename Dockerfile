@@ -5,7 +5,7 @@
 #
 
 # Pull base image.
-FROM       daocloud.io/library/ubuntu:latest
+FROM       daocloud.io/library/ubuntu:14.04
 MAINTAINER xiongjun,dockerxman <fenyunxx@163.com>
 
 ADD sources.list /etc/apt/sources.list
