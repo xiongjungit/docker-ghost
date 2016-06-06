@@ -65,7 +65,7 @@ docker pull daocloud.io/xiongjun_dao/docker-mysql:latest
 或者 你可以从  Dockerfile 创建:
 
 ```
-docker build -t="xman/ghost" github.com/xiongjungit/docker-mysql/5.6
+docker build -t="xman/mysql:5.6" github.com/xiongjungit/docker-mysql/5.6
 ```
 
 * 从 [daocloud.io](https://dashboard.daocloud.io)下载 [自动创建的Ghost镜像](https://dashboard.daocloud.io/packages) 
@@ -77,7 +77,7 @@ docker pull daocloud.io/xiongjun_dao/docker-ghost:latest
 或者你可以从 Dockerfile 创建:
 
 ```
-docker build -t="xman/ghost" github.com/xiongjungit/docker-ghost
+docker build -t="xman/ghost:0.7.4" github.com/xiongjungit/docker-ghost
 ```
 
 ### 使用
