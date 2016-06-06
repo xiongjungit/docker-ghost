@@ -48,35 +48,151 @@ http://www.ghostchina.com/download/
 
 ### 基础docker镜像
 
-* [dockerfile/nodejs](http://dockerfile.github.io/#/nodejs)
+* [ubuntu 14.04 ](http://daocloud.io/library/ubuntu:14.04)
 
 
 ### 安装
 
-1. 安装 [Docker](https://www.docker.com/).
+此版本是mysql数据库版本，并且支持markdown表格。
 
-2. 下载 [自动创建的Ghost镜像](https://registry.hub.docker.com/u/dockerfile/ghost/) 从 [Docker Hub Registry](https://registry.hub.docker.com/): `docker pull dockerfile/ghost`
+* 安装 [Docker](https://www.docker.com/)
 
-   (或者你可以从 Dockerfile 创建: `docker build -t="dockerfile/ghost" github.com/dockerfile/ghost`)
+* 从 [daocloud.io](https://dashboard.daocloud.io)下载[自动创建的MySQL镜像](https://dashboard.daocloud.io/packages) 
 
+```
+docker pull daocloud.io/xiongjun_dao/docker-mysql:latest
+```
+或者 你可以从  Dockerfile 创建:
+
+```
+docker build -t="xman/ghost" github.com/xiongjungit/docker-mysql/5.6
+```
+
+* 从 [daocloud.io](https://dashboard.daocloud.io)下载 [自动创建的Ghost镜像](https://dashboard.daocloud.io/packages) 
+
+```
+docker pull daocloud.io/xiongjun_dao/docker-ghost:latest
+```
+
+或者你可以从 Dockerfile 创建:
+
+```
+docker build -t="xman/ghost" github.com/xiongjungit/docker-ghost
+```
 
 ### 使用
 
-    docker run -d -p 80:2368 dockerfile/ghost
+####  启动MySQL容器
 
-#### 定制 Ghost
+```
+docker run -h ghostdb -d -p 3306:3306 -v /data/ghost/ghostdb/data:/var/lib/mysql --name ghostdb xman/mysql:5.6
 
-    docker run -d -p 80:2368 -v <override-dir>:/ghost-override dockerfile/ghost
+sleep 3
 
-`<override-dir>` 可以包含绝对路径的目录:
+docker logs mysql
+```
 
-*  `config.js`: 从 [这里](https://github.com/TryGhost/Ghost/blob/master/config.example.js)复制自定义配置文件 (必须更改 `127.0.0.1` 为 `0.0.0.0`)
+* `ghostdb/data` 持续/共享的MySQL数据库
+
+你会看到以下内容,其中给出了连接mysql数据库的用户名和密码
+
+```
+========================================================================
+You can now connect to this MySQL Server using:
+
+    mysql -uadmin -p5yIlmt4IXEYs -h<host> -P<port>
+
+Please remember to change the above password as soon as possible!
+MySQL user 'root' has no password but only allows local connections
+========================================================================
+```
+
+需要进入到ghostdb容器中创建ghost数据库
+
+```
+docker exec -it ghostdb /bin/bash
+
+mysql -uadmin -p5yIlmt4IXEYs -h127.0.0.1
+
+create database ghost
+
+```
+
+#### 启动Ghost容器
+
+```
+docker run -h ghost -d -p 80:2368 -v /data/ghost/content:/ghost/content --link ghostdb:db --name ghost xman/ghost
+```
 
 * `content/data/`: 持续/共享的数据
 
 * `content/images/`: 持续/共享的图像
 
 * `content/themes/`: 更多主题
+
+* 需要修改的地方
+
+启动后会报错并关闭,查看日志`docker logs ghost`
+
+```
+Migrations: Database initialisation required for version 004
+Migrations: Creating tables...
+Migrations: Creating table: posts
+
+ERROR: ER_ACCESS_DENIED_ERROR: Access denied for user 'admin'@'172.17.0.3' (using password: NO)
+```
+
+发现连接数据库出错
+
+需要修改容器中的`/ghost/config.js`
+
+查看文件位置
+
+```
+docker inspect -f {{.Mounts}} ghost|awk '{print $6}'
+```
+
+进入到上面指令显示出的本地目录修改`config.js`文件
+
+```
+//修改为使用mysql数据库
+     production: {
+        url: 'http://127.0.0.1',
+        mail: {},
+        database: {
+            client: 'mysql',
+            connection: {
+                host     : '172.17.0.2',
+                user     : 'admin', //用户名
+                password : '5yIlmt4IXEYs', //密码
+                database : 'ghost', //数据库名
+                charset  : 'utf8'
+            }
+        },
+```
+
+`url: 'http://127.0.0.1',` 需要修改为你自己的url地址
+
+`password : '5yIlmt4IXEYs', //密码` 密码需要修改为上面myql容器随机生成的密码
+
+接下来启动刚才报错的ghost容器
+
+```
+docker start ghost
+```
+
+再次查看日志`docker logs ghost`
+
+
+```
+> ghost@0.7.4 start /ghost
+> node index
+
+Migrations: Up to date at version 004
+Ghost is running in production... 
+Your blog is now available on http://1.2.3.4 
+Ctrl+C to shut down
+```
 
 等待几秒钟后, 在浏览器中打开 `http://<host>` 博客或者 `http://<host>/ghost` 博客后台。
 
