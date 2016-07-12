@@ -13,7 +13,7 @@ config = {
 
 /*
     production: {
-        url: 'http://218.245.6.35',
+        url: 'http://127.0.0.1',
         mail: {},
         database: {
             client: 'sqlite3',
