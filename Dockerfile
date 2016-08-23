@@ -48,17 +48,15 @@ RUN \
 #
 
 # Install Node.js
+# Need Node.js v4.2.0
 RUN \
   cd /tmp && \
-  wget http://npm.taobao.org/mirrors/node/v0.10.40/node-v0.10.40.tar.gz  && \
-  tar xvzf node-v0.10.40.tar.gz && \
-  rm -f node-v0.10.40.tar.gz && \
-  cd node-v* && \
-  ./configure && \
-  CXX="g++ -Wno-unused-local-typedefs" make && \
-  CXX="g++ -Wno-unused-local-typedefs" make install && \
-  cd /tmp && \
-  rm -rf /tmp/node-v* && \
+  wget https://nodejs.org/dist/v4.2.0/node-v4.2.0-linux-x64.tar.gz && \
+  tar zxvf node-v4.2.0-linux-x64.tar.gz && \
+  rm -f node-v4.2.0-linux-x64.tar.gz && \
+  mv node-v4.2.0-linux-x64 /opt/node && \
+  ln -s /opt/node/bin/node /usr/local/bin/node && \
+  ln -s /opt/node/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \ 
   npm config set registry https://registry.npm.taobao.org && \
   npm install -g npm && \
   printf '\n# Node.js\nexport PATH="node_modules/.bin:$PATH"' >> /root/.bashrc

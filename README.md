@@ -1,6 +1,6 @@
 ## Ghost 7.0.4 正式发布
 
-![](http://static.ghostchina.com/image/a/21/de1b2911072f5a4eff82abdb62632.png)
+![](http://static.ghostchina.com/image/a/10/ffe40181fc1023de4d2060d5d0ce2.png)
 
 紧随 Ghost 官方脚步，Ghost 0.7.4 中文正式版发布了！这一版本包含了自 Ghost 0.7.3 版本发布以来所修正的 bug，主要是针对开放 API 功能的改进。
 
